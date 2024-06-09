@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CGCEB Online - Candidate Portal</title>
+    <link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css">
+</head>
+
+<body>
+    <h1 id="welcome-msg">Welcome </h1>
+    <div class="accordion" id="reg-accordion">
+    </div>
+    <script src="../js/jquery.js"></script>
+    <script src="../bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/template.js"></script>
+    <script src="../js/api_factory.js"></script>
+    <script>
+        let name = JSON.parse(localStorage.getItem("candidate")).first_name;
+        let gce_id = JSON.parse(localStorage.getItem("candidate")).gce_id;
+        document.getElementById("welcome-msg").innerHTML += name;
+
+        if (fetchRegistrations(gce_id)) {
+            registrations = JSON.parse(localStorage.getItem('registrations'));
+            registrations.forEach(element => {
+                sesInfo = { "open": false, "msg": "not open" };
+                if (element.is_center_open) {
+                    if (element.is_exam_center_open) {
+                        if (element.is_session_open) {
+                            if (element.is_exam_session_open) {
+                                sesInfo.open = true;
+                            }
+                        }
+                    }
+                } else {
+                    sesInfo.msg = element.year
+                }
+                console.log("Status", sesInfo.open);
+                $accordionItem = $(regAccordionItem.replace(/reg-panel/g, "reg-panel-" + element.reg_id));
+                $accordionItem.attr("id", element.reg_id);
+                $accordionItem.find("h2 > button").eq(0).text(`${element.year} - ${element.exam_name}`);
+
+                $regTbl = $(regTable);
+                $regTbl.attr("id", `reg-tbl-${element.reg_id}`);
+
+                if (fetchCandidateSubjects(element.reg_id)) {
+                    tblData = JSON.parse(localStorage.getItem("candidate_subjects-" + element.reg_id));
+                    tblData.forEach(subject => {
+                        $regTblRow = $("<tr></tr>");
+                        $regTblRow.append($("<td></td>").text(subject.code));
+                        $regTblRow.append($("<td></td>").text(subject.title));
+                        $regTblRow.append($("<td></td>").text(subject.subject_fee));
+                        $regTblRow.append($("<td></td>").text(subject.has_practical));
+                        $regTblRow.append($("<td></td>").text(subject.practical_fee));
+                        $regTbl.find("tbody").eq(0).append($regTblRow);
+                    });
+                    $accBody = $accordionItem.find('#reg-accordion-body');
+                    $accBody.attr("id", `#reg-accordion-body-${element.reg_id}`)
+                    $accBody.append($regTbl);
+                }
+                $('#reg-accordion').append($accordionItem);
+            });
+        }
+    </script>
+</body>
+
+</html>

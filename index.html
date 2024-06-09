@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CGCEB Online - Candidate Portal</title>
+</head>
+
+<body>
+    <h1>Welcome to the Candidate Portal</h1>
+    <form id="myForm">
+        <label>GCE ID</label>
+        <input id="gce_id" type="text" name="gce_id">
+        <input type="submit" />
+    </form>
+    <script src="js/api_factory.js"></script>
+    <script>
+        // Get the form element
+        const form = document.getElementById('myForm');
+
+        // Add a submit event listener
+        form.addEventListener('submit', function (event) {
+            // Prevent the default form submit action
+            event.preventDefault();
+
+            // Handle form submission (e.g., validate form, send data via AJAX, etc.)
+            candidateID = document.getElementById("gce_id").value;
+            console.log("Trying to get candidte ...", candidateID);
+            fetchCandidate(candidateID);
+        });
+    </script>
+</body>
+
+</html>
