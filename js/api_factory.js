@@ -97,44 +97,19 @@ function addSubject(data) {
     });
 }
 
-function removeSubject(src, data) {
-    console.log(src.parentNode.parentNode.firstElementChild.innerHTML, data)
-    const url = `${BASE_URL}subject_registrations`;
+function removeSubject(id) {
+    const url = `${BASE_URL}subject_registrations/${id}`;
 
     return fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
+        method: 'DELETE'
     })
     .then(response => {
         if (!response.ok) {
             throw new Error('Network response was not ok ' + response.statusText);
         }
-        return true;
+        location.reload();
     })
     .catch(error => {
         console.error('There has been a problem with your fetch operation:', error);
-        return false;
     });
-    // const url = `${BASE_URL}subject_registrations`;
-
-    // return fetch(url, {
-    //     method: 'POST',
-    //     headers: {
-    //         'Content-Type': 'application/json'
-    //     },
-    //     body: JSON.stringify(data)
-    // })
-    // .then(response => {
-    //     if (!response.ok) {
-    //         throw new Error('Network response was not ok ' + response.statusText);
-    //     }
-    //     return true;
-    // })
-    // .catch(error => {
-    //     console.error('There has been a problem with your fetch operation:', error);
-    //     return false;
-    // });
 }
