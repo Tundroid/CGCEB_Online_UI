@@ -27,20 +27,22 @@
                     registrations.sort((a, b) => (a.year < b.year) ? 1 : -1);
                     regIds = [];
                     examIds = new Set();
-                    registrations.forEach(registration => {
+                    regStatus = {};                 
+                    registrations.forEach(registration => {                        
                         sesInfo = { "open": false, "msg": "not open" };
                         if (registration.is_center_open) {
                             if (registration.is_exam_center_open) {
                                 if (registration.is_session_open) {
                                     if (registration.is_exam_session_open) {
                                         sesInfo.open = true;
+                                    } else {
+                                        sesInfo.msg = "Exam Session is not open"
                                     }
                                 }
                             }
                         } else {
-                            sesInfo.msg = registration.year
+                            sesInfo.msg = "Center is not open"
                         }
-                        console.log("Status", sesInfo.open);
                         $accordionItem = $(regAccordionItem.replace(/reg-panel/g, "reg-panel-" + registration.reg_id));
                         $accordionItem.attr("id", registration.reg_id);
                         $accordionItem.find("h2 > button").eq(0).text(`${registration.year} - ${registration.exam_name}`);
@@ -49,7 +51,9 @@
                         $('#reg-accordion').append($accordionItem);
                         regIds.push(registration.reg_id);
                         examIds.add(registration.exam_id);
+                        regStatus[registration.reg_id] = sesInfo;
                     });
+                    console.log(regStatus);
                     regData = JSON.parse(localStorage.getItem("registrations"));
                     examIds.forEach(examId => {
                         subjFrmId = `subj-frm-${examId}`;
@@ -69,9 +73,8 @@
                                         $subjFrm.find("select").eq(0).append($selOption);
                                     });
                                 }
-                                matches = 0;
                                 regData.forEach(reg => {
-                                    if (reg.exam_id == examId) {
+                                    if (reg.exam_id == examId && regStatus[reg.reg_id].open) {
                                         $tmpForm = $subjFrm.clone();
                                         selectID = "subjectSelect-" + subjFrmId + "-reg-" + reg.reg_id;
                                         $tmpForm.find("label").eq(0).attr("for", selectID);
@@ -113,13 +116,15 @@
                                         $regTblRow.append($("<td></td>").text(subject.code));
                                         $regTblRow.append($("<td></td>").text(subject.title));
                                         $regTblRow.append($("<td></td>").text(subject.subject_fee));
-                                        $regTblRow.append($("<td></td>").text(subject.has_practical));
+                                        $regTblRow.append($("<td></td>").text(subject.has_practical ? "Yes" : "No"));
                                         $regTblRow.append($("<td></td>").text(subject.practical_fee));
-                                        $regTblRow.append($("<td></td>").text(subject.practical_fee));
-                                        $regTblRow.append($("<td></td>").append($(`<button onclick="removeSubject('${subject.id}')" type="button" class="btn btn-danger">Remove</button>`)));
+                                        if (regStatus[regId].open)
+                                            $regTblRow.append($("<td></td>").append($(`<button onclick="removeSubject('${subject.id}')" type="button" class="btn btn-danger">Remove</button>`)));
                                         $regTbl.find("tbody").eq(0).append($regTblRow);
                                     });
                                 }
+                                if (!regStatus[regId].open)
+                                    $regTbl.find("thead tr th").last().remove();
                                 $(`#reg-accordion-body-${regId}`).append($regTbl);
                             });
                         })($regTbl, regId, localDataKey);

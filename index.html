@@ -1,33 +1,68 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>CGCEB Online - Candidate Portal</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>CGCEB_Online</title>
+	<link href="./css/output.css" rel="stylesheet">
+	<link href="./css/index.css" rel="stylesheet">
+	<link rel="stylesheet" href="css/output.css">
+	<link rel="stylesheet" href="css/index.css">
+	<link rel="icon" type="image/x-icon" href="images/cgceb-logo.png">
+	<script src="https://cdn.tailwindcss.com"></script>
 </head>
-
-<body>
-    <h1>Welcome to the Candidate Portal</h1>
-    <form id="myForm">
-        <label>GCE ID</label>
-        <input id="gce_id" type="text" name="gce_id">
-        <input type="submit" />
-    </form>
-    <script src="js/api_factory.js"></script>
-    <script>
-        // Get the form element
-        const form = document.getElementById('myForm');
-
-        // Add a submit event listener
-        form.addEventListener('submit', function (event) {
-            // Prevent the default form submit action
-            event.preventDefault();
-
-            // Handle form submission (e.g., validate form, send data via AJAX, etc.)
-            candidateID = document.getElementById("gce_id").value;
-            console.log("Trying to get candidte ...", candidateID);
-            fetchCandidate(candidateID);
-        });
-    </script>
+<body class="flex-auto">
+	<header id="landing_header" class=" flex h-screen sticky top-0 items-center justify-center max-h-12 bg-sky-500 p-4">
+		<div class="float-left p-5 m-5 static mr-auto">
+			<a href="index.html">
+				<img src="images/cgceb-logo.png" alt="" class="max-h:10 max-w-10 hover:shadow-lg">
+			</a>
+		</div>
+	
+		<div class="flex float-right p-7 m-5 static">
+			<span class="hover:font-bold hover:shadow-lg active:text-red-700 focus:outline-none focus:ring focus:ring-violet-300 p-4 m-auto"><a href="pages/login.html">Login</a></span>
+			<span class=" hover:font-bold hover:shadow-lg active:text-red-700 focus:outline-none focus:ring focus:ring-violet-300 p-4 m-auto"><a href="">About</a></span>
+		</div>
+	</header>
+	<section id="content" class="flex flex-wrap p-4 m-4 items-center justify-center shadow-md bg-slate-50">
+		<div class="w-full md:w-1/2 flex-shrink-0 font-black text-4xl text-center drop-shadow-xl">
+			CGCEB ONLINE REGISTRATION <br>
+			<i class="text-sm font-normal">"..get registered securely.."</i>
+		</div>
+		<div class="w-full md:w-1/2 flex-shrink-0">
+			<img src="images/gce_image.jpg" class="w-13 h-13 object-cover rounded-md " alt="">
+		</div>
+	</section>
+	<div class="flex flex-wrap items-center justify-center m-7">
+		<a href=""><div class=" p-4 m-4 h-15 w-15  bg-sky-500 flex-shrink-0 border: rounded-md bottom-1 shadow-md hover:font-bold hover:bg-sky-400 hover:shadow-2xl active:text-red-700">Exams</div></a>
+		<a href=""><div class="p-4 m-4 h-15 w-15 bg-sky-500 flex-shrink-0 border: rounded-md bottom-1: shadow-md hover:font-bold  hover:bg-sky-400 hover:shadow-2xl active:text-red-700">Center</div></a>
+		<a href=""><div class="p-4 m-4 h-15 w-15 bg-sky-500 flex-shrink-0 border: rounded-md bottom-1: shadow-md hover:font-bold  hover:bg-sky-400 hover:shadow-2xl active:text-red-700">Courses</div></a>
+	</div>
+	<section class="flex flex-wrap items-center justify-center m-4 p-4 ">
+		<p class="text-2xl font-bold">Faces of the GCE Board</p>
+		<div class="flex flex-col-3 ">
+			<div class=" w-1/3 grid grid-rows-2 p-7 m-7 border-2: rounded-md bottom: shadow-md hover:shadow-2xl bg-slate-50">
+				<img src="images/gce_faces.jpeg" class="flex-grow" alt="">
+				<p class="flex-grow">Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.</p>
+			</div>
+			<div class=" w-1/3 grid grid-rows-2 p-7 m-7 border-2: rounded-md bottom: shadow-md hover:shadow-2xl bg-slate-50">
+				<img src="images/gce_faces.jpeg" class="flex-grow" alt="">
+				<p class="flex-grow">Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.</p>
+			</div>
+			<div class=" w-1/3 grid grid-rows-2 p-7 m-7 border-2: rounded-md bottom: shadow-md hover:shadow-2xl bg-slate-50">
+				<img src="images/gce_faces.jpeg" class="flex-grow" alt="">
+				<p class="flex-grow">Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.</p>
+			</div>
+		</div>
+	</section>
+	<footer class=" flex flex-wrap bg-sky-500 items-center justify-center p-4">
+		<span class="text-center">Contact Us</span>
+		<div>
+			<a href="https://camgceb.org/"><img src="" alt="website">GCE BOARD</a>
+			<a href="https://camgceb.org/"><img src="" alt="website"></a>
+			<p><img src="" alt="">: tel</p>
+		</div>
+	</footer>
+	<script src="scripts/index.js"></script>
 </body>
-
 </html>
