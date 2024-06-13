@@ -1,8 +1,8 @@
 const BASE_URL = "http://web-02.moleculesoft.tech:5000/api/v1/"
 
-async function fetchCandidate(candidateID) {
+function fetchCandidate(candidateID) {
     const url = `${BASE_URL}candidates/${candidateID}`;
-    await fetch(url)
+    return fetch(url)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok ' + response.statusText);
@@ -11,10 +11,12 @@ async function fetchCandidate(candidateID) {
         })
         .then(data => {
             localStorage.setItem("candidate", JSON.stringify(data));
-            window.location.href = "./candidate";
+            console.log("Data", data);
+            return true;
         })
         .catch(error => {
             console.error('There has been a problem with your fetch operation:', error);
+            return false;
         });
 }
 
@@ -85,16 +87,16 @@ function addSubject(data) {
         },
         body: JSON.stringify(data)
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok ' + response.statusText);
-        }
-        return true;
-    })
-    .catch(error => {
-        console.error('There has been a problem with your fetch operation:', error);
-        return false;
-    });
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return true;
+        })
+        .catch(error => {
+            console.error('There has been a problem with your fetch operation:', error);
+            return false;
+        });
 }
 
 function removeSubject(id) {
@@ -103,13 +105,13 @@ function removeSubject(id) {
     return fetch(url, {
         method: 'DELETE'
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok ' + response.statusText);
-        }
-        location.reload();
-    })
-    .catch(error => {
-        console.error('There has been a problem with your fetch operation:', error);
-    });
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            location.reload();
+        })
+        .catch(error => {
+            console.error('There has been a problem with your fetch operation:', error);
+        });
 }
