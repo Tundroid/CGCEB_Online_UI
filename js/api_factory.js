@@ -18,9 +18,9 @@ async function fetchCandidate(candidateID) {
         });
 }
 
-async function fetchRegistrations(gecId) {
+function fetchRegistrations(gecId) {
     const url = `${BASE_URL}registrations/${gecId}`;
-    await fetch(url)
+    return fetch(url)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok ' + response.statusText);
@@ -33,13 +33,13 @@ async function fetchRegistrations(gecId) {
         })
         .catch(error => {
             console.error('There has been a problem with your fetch operation:', error);
+            return false;
         });
-    return false;
 }
 
-async function fetchCandidateSubjects(regId) {
-    const url = `${BASE_URL}candidate_subjects/${regId}`;
-    await fetch(url)
+function fetchSubjects(examId, localDataKey) {
+    const url = `${BASE_URL}subjects/${examId}`;
+    return fetch(url)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok ' + response.statusText);
@@ -47,11 +47,94 @@ async function fetchCandidateSubjects(regId) {
             return response.json();
         })
         .then(data => {
-            localStorage.setItem("candidate_subjects-" + regId, JSON.stringify(data));
+            localStorage.setItem(localDataKey, JSON.stringify(data));
             return true;
         })
         .catch(error => {
             console.error('There has been a problem with your fetch operation:', error);
+            return false;
         });
-    return false;
+}
+
+function fetchCandidateSubjects(regId, localDataKey) {
+    const url = `${BASE_URL}candidate_subjects/${regId}`;
+    return fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            localStorage.setItem(localDataKey, JSON.stringify(data));
+            return true;
+        })
+        .catch(error => {
+            console.error('There has been a problem with your fetch operation:', error);
+            return false;
+        });
+}
+
+function addSubject(data) {
+    const url = `${BASE_URL}subject_registrations`;
+
+    return fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+        return true;
+    })
+    .catch(error => {
+        console.error('There has been a problem with your fetch operation:', error);
+        return false;
+    });
+}
+
+function removeSubject(src, data) {
+    console.log(src.parentNode.parentNode.firstElementChild.innerHTML, data)
+    const url = `${BASE_URL}subject_registrations`;
+
+    return fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+        return true;
+    })
+    .catch(error => {
+        console.error('There has been a problem with your fetch operation:', error);
+        return false;
+    });
+    // const url = `${BASE_URL}subject_registrations`;
+
+    // return fetch(url, {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify(data)
+    // })
+    // .then(response => {
+    //     if (!response.ok) {
+    //         throw new Error('Network response was not ok ' + response.statusText);
+    //     }
+    //     return true;
+    // })
+    // .catch(error => {
+    //     console.error('There has been a problem with your fetch operation:', error);
+    //     return false;
+    // });
 }

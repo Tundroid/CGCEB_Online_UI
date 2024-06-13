@@ -19,8 +19,17 @@ const regTable = `<table class="table">
                             <th>Subject Fee</th>
                             <th>Has Practical</th>
                             <th>Practical Fee</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                     </tbody>
                     </table>`;
+const subjectForm = `<form>
+                        <div class="form-group">
+                            <label>Select Subject:</label>
+                            <select class="form-control">
+                            </select>
+                            <button type="submit" class="btn btn-primary">Add</button>
+                        </div>
+                    </form>`;
