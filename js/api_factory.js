@@ -1,7 +1,7 @@
 const BASE_URL = "http://web-02.moleculesoft.tech:5000/api/v1/"
 
-function fetchCandidate(candidateID) {
-    const url = `${BASE_URL}candidates/${candidateID}`;
+function fetchCandidate(gceId) {
+    const url = `${BASE_URL}candidates/${gceId}`;
     return fetch(url)
         .then(response => {
             if (!response.ok) {
@@ -11,7 +11,6 @@ function fetchCandidate(candidateID) {
         })
         .then(data => {
             localStorage.setItem("candidate", JSON.stringify(data));
-            console.log("Data", data);
             return true;
         })
         .catch(error => {

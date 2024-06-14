@@ -54,7 +54,6 @@
 			$('#login-frm').on('submit', function (event) {
 				event.preventDefault();
 				fetchCandidate($("#gce_id").val()).then(result => {
-					console.log("Result", result);
 					if (result) {
 						location.href = "../candidate";
 					} else {
