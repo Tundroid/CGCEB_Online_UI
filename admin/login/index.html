@@ -29,8 +29,8 @@
 		<p>First registration? <a href="signin.html"
 				class=" hover:font-bold active:text-red-700 text-sky-500">Sign-in</a></p>
 		<div class=" p-2 m-2 ">
-			<label for="gce_id">GCE id:</label><br>
-			<input type="text" id="gce_id" name="gce_id" class=" border-2"><br>
+			<label for="admin_id">GCE id:</label><br>
+			<input type="text" id="admin_id" name="admin_id" class=" border-2"><br>
 		</div>
 		<div class=" p-2 m-2 ">
 			<label for="pwd">Password:</label><br>
@@ -53,10 +53,11 @@
 		$(document).ready(function () {
 			$('#login-frm').on('submit', function (event) {
 				event.preventDefault();
-				data = {admin_id: }
-				fetchAdmin($("#gce_id").val()).then(result => {
+				data = {admin_id: $("#admin_id").val(), admin_pass: $("#pwd").val()};
+				localStorage.removeItem("admin-sessiopn");
+				login(data, "admin").then(result => {
 					if (result) {
-						location.href = "../candidate";
+						location.href = "..";
 					} else {
 						alert("Could not log in");
 					}

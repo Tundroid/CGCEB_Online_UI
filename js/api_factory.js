@@ -1,8 +1,12 @@
 const BASE_URL = "http://web-02.moleculesoft.tech:5000/api/v1/"
 
-function fetchCandidate(gceId) {
+function fetchCandidate(gceId, token) {
     const url = `${BASE_URL}candidates/${gceId}`;
-    return fetch(url)
+    return fetch(url, {
+        headers: {
+            'Authorization': 'bearer ' + token
+        }
+    })
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok ' + response.statusText);
@@ -19,9 +23,40 @@ function fetchCandidate(gceId) {
         });
 }
 
-function fetchRegistrations(gecId) {
+function login(data, type = "candidate") {
+    const url = `${BASE_URL}${type}s/login`;
+
+    return fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+
+        .then(data => {
+            localStorage.setItem(`${type}-session`, JSON.stringify(data));
+            return true;
+        })
+        .catch(error => {
+            console.error('There has been a problem with your fetch operation:', error);
+            return false;
+        });
+}
+
+function fetchRegistrations(gecId, token) {
     const url = `${BASE_URL}registrations/${gecId}`;
-    return fetch(url)
+    return fetch(url, {
+        headers: {
+            'Authorization': 'bearer ' + token
+        }
+    })
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok ' + response.statusText);
@@ -38,9 +73,13 @@ function fetchRegistrations(gecId) {
         });
 }
 
-function fetchSubjects(examId, localDataKey) {
+function fetchSubjects(examId, localDataKey, token) {
     const url = `${BASE_URL}subjects/${examId}`;
-    return fetch(url)
+    return fetch(url, {
+        headers: {
+            'Authorization': 'bearer ' + token
+        }
+    })
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok ' + response.statusText);
@@ -57,9 +96,13 @@ function fetchSubjects(examId, localDataKey) {
         });
 }
 
-function fetchCandidateSubjects(regId, localDataKey) {
+function fetchCandidateSubjects(regId, localDataKey, token) {
     const url = `${BASE_URL}candidate_subjects/${regId}`;
-    return fetch(url)
+    return fetch(url, {
+        headers: {
+            'Authorization': 'bearer ' + token
+        }
+    })
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok ' + response.statusText);
@@ -76,12 +119,13 @@ function fetchCandidateSubjects(regId, localDataKey) {
         });
 }
 
-function addSubject(data) {
+function addSubject(data, token) {
     const url = `${BASE_URL}subject_registrations`;
 
     return fetch(url, {
         method: 'POST',
         headers: {
+            'Authorization': 'bearer ' + token,
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
@@ -98,11 +142,14 @@ function addSubject(data) {
         });
 }
 
-function removeSubject(id) {
+function removeSubject(id, token) {
     const url = `${BASE_URL}subject_registrations/${id}`;
 
     return fetch(url, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+            'Authorization': 'bearer ' + token
+        },
     })
         .then(response => {
             if (!response.ok) {

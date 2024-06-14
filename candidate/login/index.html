@@ -46,16 +46,18 @@
 		<p class="text-center mt-8 drop-shadow-sm">CGCEB ONLINE REGISTRATION <br> <i>"..get registered securely.."</i>
 		</p>
 	</form>
-	<script src="scripts/index.js"></script>
-	<script src="../js/api_factory.js"></script>
-	<script src="../js/jquery.js"></script>
+	<script src="../../scripts/index.js"></script>
+	<script src="../../js/api_factory.js"></script>
+	<script src="../../js/jquery.js"></script>
 	<script>
 		$(document).ready(function () {
 			$('#login-frm').on('submit', function (event) {
 				event.preventDefault();
-				fetchCandidate($("#gce_id").val()).then(result => {
+				data = {gce_id: $("#gce_id").val(), candidate_pass: $("#pwd").val()};
+				localStorage.removeItem("candidate-sessiopn");
+				login(data).then(result => {
 					if (result) {
-						location.href = "../candidate";
+						location.href = "..";
 					} else {
 						alert("Could not log in");
 					}
