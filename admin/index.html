@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CGCEB Online - Candidate Portal</title>
+    <link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css">
+    <script src="../js/app.js"></script>
+    <script>
+        checkAdminSession();
+    </script>
+</head>
+
+<body>
+    <h1 id="welcome-msg">Welcome </h1>
+    <div class="accordion" id="reg-accordion">
+    </div>
+    <script src="../js/jquery.js"></script>
+    <script src="../bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/template.js"></script>
+    <script src="../js/api_factory.js"></script>
+    <script>
+        $(document).ready(function () {
+            let name = JSON.parse(localStorage.getItem("candidate")).first_name;
+            let gce_id = JSON.parse(localStorage.getItem("candidate")).gce_id;
+            document.getElementById("welcome-msg").innerHTML += name;
+
+            localStorage.removeItem("registrations");
+            fetchRegistrations(gce_id).then(result => {
+                if (result) {
+                    registrations = JSON.parse(localStorage.getItem('registrations'));
+                    registrations.sort((a, b) => (a.year < b.year) ? 1 : -1);
+                    regIds = [];
+                    examIds = new Set();
+                    regStatus = {};
+                    registrations.forEach(registration => {
+                        sesInfo = { "open": false, "msg": "not open" };
+                        if (registration.is_center_open) {
+                            if (registration.is_exam_center_open) {
+                                if (registration.is_session_open) {
+                                    if (registration.is_exam_session_open) {
+                                        sesInfo.open = true;
+                                    } else {
+                                        sesInfo.msg = "Exam Session is not open"
+                                    }
+                                }
+                            }
+                        } else {
+                            sesInfo.msg = "Center is not open"
+                        }
+                        $accordionItem = $(regAccordionItem.replace(/reg-panel/g, "reg-panel-" + registration.reg_id));
+                        $accordionItem.attr("id", registration.reg_id);
+                        $accordionItem.find("h2 > button").eq(0).text(`${registration.year} - ${registration.exam_name}`);
+                        $accBody = $accordionItem.find('#reg-accordion-body');
+                        $accBody.attr("id", `reg-accordion-body-${registration.reg_id}`);
+                        $('#reg-accordion').append($accordionItem);
+                        regIds.push(registration.reg_id);
+                        examIds.add(registration.exam_id);
+                        regStatus[registration.reg_id] = sesInfo;
+                    });
+                    regData = JSON.parse(localStorage.getItem("registrations"));
+                    examIds.forEach(examId => {
+                        subjFrmId = `subj-frm-${examId}`;
+                        $subjFrm = $(subjectForm);
+                        $subjFrm.attr("id", subjFrmId);
+                        localDataKey = "subjects-" + subjFrmId;
+                        localStorage.removeItem(localDataKey);
+                        (function ($subjFrm, examId, localDataKey) {
+                            fetchSubjects(examId, localDataKey).then(result => {
+                                if (result) {
+                                    formData = JSON.parse(localStorage.getItem(localDataKey));
+                                    formData.sort((a, b) => (a.title > b.title) ? 1 : -1);
+                                    formData.forEach(subject => {
+                                        $selOption = $('<option></option>');
+                                        $selOption.attr('value', subject.code);
+                                        $selOption.text(subject.code + " - " + subject.title);
+                                        $subjFrm.find("select").eq(0).append($selOption);
+                                    });
+                                }
+                                regData.forEach(reg => {
+                                    if (reg.exam_id == examId && regStatus[reg.reg_id].open) {
+                                        $tmpForm = $subjFrm.clone();
+                                        selectID = "subjectSelect-" + subjFrmId + "-reg-" + reg.reg_id;
+                                        $tmpForm.find("label").eq(0).attr("for", selectID);
+                                        $tmpForm.find("select").eq(0).attr("id", selectID);
+                                        $tmpForm.find("button").eq(0).attr("id", "btn-" + subjFrmId + "-reg-" + reg.reg_id);
+                                        $tmpForm.attr("id", subjFrmId + "-reg-" + reg.reg_id);
+                                        $tmpForm.on('submit', function (event) {
+                                            event.preventDefault();
+                                            subj = $(this).find("select").eq(0).val();
+                                            subjText = $(this).find("select option:selected").eq(0).text();
+                                            data = { exam_reg: reg.reg_id, exam_subj: subj };
+                                            addSubject(data).then(result => {
+                                                if (result) {
+                                                    location.reload();
+                                                } else {
+                                                    alert("Could not add " + subjText);
+                                                }
+                                            });
+                                        });
+                                        $(`#reg-accordion-body-${reg.reg_id}`).prepend($tmpForm);
+                                    }
+                                });
+                            });
+                        })($subjFrm, examId, localDataKey);
+                    });
+                    regIds.forEach(regId => {
+                        tblId = `reg-tbl-${regId}`;
+                        $regTbl = $(regTable);
+                        $regTbl.attr("id", tblId);
+                        localDataKey = "candidate_subjects-" + tblId;
+                        localStorage.removeItem(localDataKey);
+                        (function ($regTbl, regId, localDataKey) {
+                            fetchCandidateSubjects(regId, localDataKey).then(result => {
+                                if (result) {
+                                    tblData = JSON.parse(localStorage.getItem(localDataKey));
+                                    tblData.sort((a, b) => (a.code > b.code) ? 1 : -1);
+                                    tblData.forEach(subject => {
+                                        $regTblRow = $("<tr></tr>");
+                                        $regTblRow.append($("<td></td>").text(subject.code));
+                                        $regTblRow.append($("<td></td>").text(subject.title));
+                                        $regTblRow.append($("<td></td>").text(subject.subject_fee));
+                                        $regTblRow.append($("<td></td>").text(subject.has_practical ? "Yes" : "No"));
+                                        $regTblRow.append($("<td></td>").text(subject.practical_fee));
+                                        if (regStatus[regId].open)
+                                            $regTblRow.append($("<td></td>").append($(`<button onclick="removeSubject('${subject.id}')" type="button" class="btn btn-danger">Remove</button>`)));
+                                        $regTbl.find("tbody").eq(0).append($regTblRow);
+                                    });
+                                }
+                                if (!regStatus[regId].open)
+                                    $regTbl.find("thead tr th").last().remove();
+                                $(`#reg-accordion-body-${regId}`).append($regTbl);
+                            });
+                        })($regTbl, regId, localDataKey);
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
